@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2 class="text-center m-3">Smart Home <span id="time" class="m-3"></span></h2>
+<hr/>
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">Devices</div>
+            <div class="card-body">
+                <div class="m-3">
+                    <span class="badge badge-success" style="font-size:15px;">Room 1:</span>
+                    <input class="switch" data-room="1" type="checkbox" data-toggle="toggle" data-onstyle="primary" />
+                    <span class="float-right off" data-room="1"></span>
+                </div>
+                <hr />
+                <div class="m-3">
+                    <span class="badge badge-success" style="font-size:15px;">Room 2:</span>
+                    <input class="switch" data-room="2" type="checkbox" data-toggle="toggle" data-onstyle="primary" />
+                    <span class="float-right off" data-room="2"></span>
+                </div>
+                <hr />
+                <div class="m-3">
+                    <span class="badge badge-success" style="font-size:15px;">Room 3:</span>
+                    <input class="switch" data-room="3" type="checkbox" data-toggle="toggle" data-onstyle="primary" />
+                    <span class="float-right off" data-room="3"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        $(() => {
+            toastr.options = {
+                "preventDuplicates":true
+            }
+
+            $switch = $(".switch")
+
+            $switch.on('change', async (e)=> {
+                var target = e.target
+                var roomNo = $(target).data('room')
+
+                var switchElement = $(`.switch[data-room='${roomNo}']`)
+                var bulbElement = $(`.float-right[data-room='${roomNo}']`)
+
+                var switchValue = $(target).prop('checked')
+                var command = switchValue == true ? 'on' : 'off'
+
+                $.ajax({
+                    url: `/home/send?command=${command}&&roomNumber=${roomNo}`,
+                    method: 'Get',
+                    success: (result) => {
+                        if(switchValue)
+                            $(bulbElement).removeClass("off").addClass("on")
+                        else
+                            $(bulbElement).removeClass("on").addClass("off")
+
+                        toastr.success('Command completed successfully!')
+                    },
+                    error: (error) => {
+                        $(switchElement).bootstrapToggle('off', true)
+                        $(bulbElement).removeClass("on").addClass("off")
+
+                        toastr.error('Could not complete command. Please try again!')
+                    }
+                })
+                
+            })
+
+            setInterval(function () {
+                var date = new Date().toLocaleString()
+                $("#time").html(date)
+            },1000)
+        })
+    </script>
+}
