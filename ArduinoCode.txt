@@ -1,0 +1,41 @@
+String command;
+int roomOnePin=5;
+int roomTwoPin=6;
+int roomThreePin=7;
+
+void setup() {
+ Serial.begin(9600);
+ pinMode(roomOnePin,OUTPUT);
+ pinMode(roomTwoPin,OUTPUT);
+ pinMode(roomThreePin,OUTPUT);
+}
+
+void loop() {
+    if(Serial.available()>0){
+      command = Serial.readString();
+
+      if(command == "on1"){
+        digitalWrite(roomOnePin,HIGH);
+      }
+
+      if(command =="on2"){
+        digitalWrite(roomTwoPin,HIGH);
+      }
+
+      if(command =="on3"){
+        digitalWrite(roomThreePin,HIGH);
+      }
+
+      if(command == "off1"){
+        digitalWrite(roomOnePin,LOW);
+      }
+
+      if(command == "off2"){
+        digitalWrite(roomTwoPin,LOW);
+      }
+
+      if(command == "off3"){
+        digitalWrite(roomThreePin,LOW);
+      }
+    }
+}
